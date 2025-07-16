@@ -1,0 +1,9 @@
+# Transformation from camR frame to MPU6050 frame in meters
+{
+  "T_camR_to_IMU": [
+    [0.0, -1.0,  0.0,  0.003779], # X
+    [0.0,  0.0, -1.0, -0.037178], # Y
+    [1.0,  0.0,  0.0, -0.070528], # Z
+    [0.0,  0.0,  0.0,  1.0] # HG
+  ]
+}

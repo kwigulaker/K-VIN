@@ -1,0 +1,10 @@
+// MPU6050MSG.idl
+struct MPU6050MSG {
+    short ax; 
+    short ay; 
+    short az; 
+    short gx; 
+    short gy; 
+    short gz;
+    long timestamp;
+};

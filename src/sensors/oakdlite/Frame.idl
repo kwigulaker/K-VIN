@@ -1,0 +1,9 @@
+// Frame.idl
+struct Frame {
+    long width;
+    long height;
+    long step;
+    sequence<octet> data;
+    string encoding;
+    long timestamp;
+};
