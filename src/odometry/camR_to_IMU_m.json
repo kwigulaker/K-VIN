@@ -4,5 +4,7 @@
     [0.0,  0.0, -1.0, -0.037178],
     [1.0,  0.0,  0.0, -0.070528],
     [0.0,  0.0,  0.0,  1.0]
-  ]
+  ],
+  "units": "meters",
+  "description": "transformation from cam_R to MPU6050 frames on K-VIN."
 }

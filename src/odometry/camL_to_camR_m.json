@@ -1,0 +1,10 @@
+{
+  "T_camL_to_camR": [
+    [1.0, 0.0, 0.0, 0.075],
+    [0.0, 1.0, 0.0, 0.0],
+    [0.0, 0.0, 1.0, 0.0],
+    [0.0, 0.0, 0.0, 1.0]
+  ],
+  "units": "meters",
+  "description": "transformation from cam_L to cam_R frame for Oak-D Lite."
+}
