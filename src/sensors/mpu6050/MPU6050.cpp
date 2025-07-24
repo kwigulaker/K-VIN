@@ -107,6 +107,5 @@ IMU MPU6050::readProcessed() {
             (gy / gyro_scale - gyro_bias_[1]) * deg2rad,
             (gz / gyro_scale - gyro_bias_[2]) * deg2rad
         },
-        std::chrono::system_clock::now(),
     };
 }

@@ -1,0 +1,9 @@
+// FrameMSG.idl
+struct FrameMSG {
+    long width;
+    long height;
+    long step;
+    long timestamp;
+    string encoding;
+    sequence<octet,65536> data;
+};

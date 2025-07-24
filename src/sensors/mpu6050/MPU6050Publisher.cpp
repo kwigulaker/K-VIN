@@ -27,12 +27,12 @@ MPU6050MSG convertToDDSMSG(const IMU& imu_parsed) {
     msg.gy(static_cast<int16_t>(imu_parsed.gyro[1]));
     msg.gz(static_cast<int16_t>(imu_parsed.gyro[2]));
 
-    auto ts = std::chrono::duration_cast<std::chrono::milliseconds>(
-        imu_parsed.timestamp.time_since_epoch()
+    int64_t ts = std::chrono::duration_cast<std::chrono::milliseconds>(
+            std::chrono::system_clock::now().time_since_epoch()
     ).count();
 
-    msg.timestamp(static_cast<int64_t>(ts));
-
+    msg.timestamp(ts);
+    //std::cout << "[MPU6050] Data @ " << std::dec << msg.timestamp() << std::endl;
     return msg;
 }
 
@@ -49,7 +49,7 @@ int main() {
     DataWriter* writerIMU = publisher->create_datawriter(topicIMU, DATAWRITER_QOS_DEFAULT);
     
     std::string i2c_device = "/dev/i2c-1";
-    std::string calib_file = "/home/kiwi/scout/src/sensors/mpu6050/calibration.json";
+    std::string calib_file = "./src/sensors/mpu6050/calibration.json";
 
     MPU6050 mpu6050(i2c_device,calib_file);
     mpu6050.initialize();

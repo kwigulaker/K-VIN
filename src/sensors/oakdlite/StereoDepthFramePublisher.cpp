@@ -2,8 +2,8 @@
 #include <thread>
 #include <opencv2/opencv.hpp>
 #include "depthai/depthai.hpp"
-#include "Frame.h"
-#include "FramePubSubTypes.h"
+#include "FrameMSG.h"
+#include "FrameMSGPubSubTypes.h"
 #include <fastdds/dds/domain/DomainParticipantFactory.hpp>
 #include <fastdds/dds/domain/DomainParticipant.hpp>
 #include <fastdds/dds/publisher/Publisher.hpp>
@@ -16,29 +16,46 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 
 using namespace eprosima::fastdds::dds;
-Frame convertToDDSFrame(const cv::Mat& mat, const std::string& encoding, int64_t timestamp) {
-    Frame msg;
+using namespace eprosima::fastdds::rtps;
+
+FrameMSG convertToDDSFrame(const cv::Mat& mat, const std::string& encoding, int64_t timestamp) {
+    FrameMSG msg;
     msg.width(mat.cols);
     msg.height(mat.rows);
     msg.step(mat.step);
-    msg.encoding(encoding);
     msg.timestamp(timestamp);
-    std::memcpy(msg.data().data(),mat.data,msg.data().size());
+
+    std::vector<uchar> buffer;
+
+    if (encoding == "mono8") {
+        std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 80};
+        cv::imencode(".jpg", mat, buffer, params);
+        msg.encoding("jpeg");
+    } else if (encoding == "16UC1") {
+        std::vector<int> params = {cv::IMWRITE_PNG_COMPRESSION, 3};
+        cv::imencode(".png", mat, buffer, params);
+        msg.encoding("png");
+    } else {
+        throw std::runtime_error("Unsupported encoding: " + encoding);
+    }
+
+    msg.data().assign(buffer.begin(), buffer.end());
     return msg;
 }
+
 
 int main() {
     DomainParticipantQos qos;
     qos.name("StereoDepthFramePublisher");
     DomainParticipant* participant = DomainParticipantFactory::get_instance()->create_participant(0,qos);
-    
-    TypeSupport frameTypeDDS(new FramePubSubType());
+
+    TypeSupport frameTypeDDS(new FrameMSGPubSubType());
     frameTypeDDS.register_type(participant);
-    
+    std::cout << "Type: " << frameTypeDDS.get_type_name() << std::endl;
     Topic* topicFrameL = participant->create_topic("FrameCamL", frameTypeDDS.get_type_name(), TOPIC_QOS_DEFAULT);
     Topic* topicFrameR = participant->create_topic("FrameCamR", frameTypeDDS.get_type_name(), TOPIC_QOS_DEFAULT);
     Topic* topicFrameDepth = participant->create_topic("FrameDepth", frameTypeDDS.get_type_name(), TOPIC_QOS_DEFAULT);
-   
+
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     DataWriter* writerFrameL = publisher->create_datawriter(topicFrameL, DATAWRITER_QOS_DEFAULT);
     DataWriter* writerFrameR = publisher->create_datawriter(topicFrameR, DATAWRITER_QOS_DEFAULT);
@@ -65,35 +82,35 @@ int main() {
     auto depthQueue = stereo->depth.createOutputQueue();
 
     pipeline.start();
-    Frame leftFrameDDS;
-    Frame rightFrameDDS;
-    Frame depthFrameDDS;
+    FrameMSG leftFrameDDS;
+    FrameMSG rightFrameDDS;
+    FrameMSG depthFrameDDS;
     std::string encodingRectifiedImages = "mono8";
-    std::string encodingDepthImages = "16UC1"; 
+    std::string encodingDepthImages = "16UC1";
 
-    auto period = std::chrono::milliseconds(200); // 5hz
+    auto period = std::chrono::milliseconds(100); // 10hz
     auto next = std::chrono::steady_clock::now() + period;
 
     while(true) {
-        auto leftSynced = syncedLeftQueue->get<dai::ImgFrame>();
-        auto rightSynced = syncedRightQueue->get<dai::ImgFrame>();
-        auto depthSynced = depthQueue->get<dai::ImgFrame>();
         // Note we use the system clock to timestamp frames and not the oakd's internal clock
         int64_t ts = std::chrono::duration_cast<std::chrono::milliseconds>(
             std::chrono::system_clock::now().time_since_epoch()
-	).count();
+        ).count();
+        auto leftSynced = syncedLeftQueue->get<dai::ImgFrame>();
+        auto rightSynced = syncedRightQueue->get<dai::ImgFrame>();
+        auto depthSynced = depthQueue->get<dai::ImgFrame>();
 
         cv::Mat leftFrameCV = leftSynced->getCvFrame();
-	cv::Mat rightFrameCV = rightSynced->getCvFrame();
-        cv::Mat depthFrameCV = depthSynced->getCvFrame();
+        cv::Mat rightFrameCV = rightSynced->getCvFrame();
+        //cv::Mat depthFrameCV = depthSynced->getCvFrame();
 
         leftFrameDDS = convertToDDSFrame(leftFrameCV,encodingRectifiedImages,ts);
         rightFrameDDS = convertToDDSFrame(rightFrameCV,encodingRectifiedImages,ts);
-        depthFrameDDS = convertToDDSFrame(depthFrameCV,encodingDepthImages,ts);
-
+        //depthFrameDDS = convertToDDSFrame(depthFrameCV,encodingDepthImages,ts);
+        
         writerFrameL->write(&leftFrameDDS);
         writerFrameR->write(&rightFrameDDS);
-        writerFrameDepth->write(&depthFrameDDS);
+        //writerFrameDepth->write(&depthFrameDDS);
         std::this_thread::sleep_until(next);
         next += period;
     }

@@ -11,8 +11,8 @@ find_package(fastcdr REQUIRED)
 
 add_executable(StereoDepthFramePublisher 
     StereoDepthFramePublisher.cpp
-    Frame.cxx
-    FramePubSubTypes.cxx
+    FrameMSG.cxx
+    FrameMSGPubSubTypes.cxx
 )
 
 target_include_directories(StereoDepthFramePublisher PRIVATE

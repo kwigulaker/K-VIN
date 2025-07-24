@@ -34,818 +34,21 @@ using namespace eprosima::fastcdr::exception;
 
 #include <utility>
 
-Frame::Frame()
-{
-    // m_width com.eprosima.idl.parser.typecode.PrimitiveTypeCode@59fd97a8
-    m_width = 0;
-    // m_height com.eprosima.idl.parser.typecode.PrimitiveTypeCode@f5ac9e4
-    m_height = 0;
-    // m_step com.eprosima.idl.parser.typecode.PrimitiveTypeCode@123ef382
-    m_step = 0;
-    // m_encoding com.eprosima.idl.parser.typecode.StringTypeCode@dbf57b3
-    m_encoding ="";
-    // m_timestamp com.eprosima.idl.parser.typecode.PrimitiveTypeCode@384ad17b
-    m_timestamp = 0;
-    // m_data com.eprosima.idl.parser.typecode.SequenceTypeCode@61862a7f
-
-
-}
-
-Frame::~Frame()
-{
-
-
-
-
-
-}
-
-Frame::Frame(
-        const Frame& x)
-{
-    m_width = x.m_width;
-    m_height = x.m_height;
-    m_step = x.m_step;
-    m_encoding = x.m_encoding;
-    m_timestamp = x.m_timestamp;
-    m_data = x.m_data;
-}
-
-Frame::Frame(
-        Frame&& x)
-{
-    m_width = x.m_width;
-    m_height = x.m_height;
-    m_step = x.m_step;
-    m_encoding = std::move(x.m_encoding);
-    m_timestamp = x.m_timestamp;
-    m_data = std::move(x.m_data);
-}
-
-Frame& Frame::operator =(
-        const Frame& x)
-{
-
-    m_width = x.m_width;
-    m_height = x.m_height;
-    m_step = x.m_step;
-    m_encoding = x.m_encoding;
-    m_timestamp = x.m_timestamp;
-    m_data = x.m_data;
-
-    return *this;
-}
-
-Frame& Frame::operator =(
-        Frame&& x)
-{
-
-    m_width = x.m_width;
-    m_height = x.m_height;
-    m_step = x.m_step;
-    m_encoding = std::move(x.m_encoding);
-    m_timestamp = x.m_timestamp;
-    m_data = std::move(x.m_data);
-
-    return *this;
-}
-
-bool Frame::operator ==(
-        const Frame& x) const
-{
-
-    return (m_width == x.m_width && m_height == x.m_height && m_step == x.m_step && m_encoding == x.m_encoding && m_timestamp == x.m_timestamp && m_data == x.m_data);
-}
-
-bool Frame::operator !=(
-        const Frame& x) const
-{
-    return !(*this == x);
-}
-
-size_t Frame::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + 255 + 1;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    current_alignment += (100 * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-
-
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t Frame::getCdrSerializedSize(
-        const Frame& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4) + data.encoding().size() + 1;
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-    if (data.data().size() > 0)
-    {
-        current_alignment += (data.data().size() * 1) + eprosima::fastcdr::Cdr::alignment(current_alignment, 1);
-    }
-
-
-
-
-    return current_alignment - initial_alignment;
-}
-
-void Frame::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-
-    scdr << m_width;
-    scdr << m_height;
-    scdr << m_step;
-    scdr << m_encoding;
-    scdr << m_timestamp;
-    scdr << m_data;
-
-}
-
-void Frame::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-
-    dcdr >> m_width;
-    dcdr >> m_height;
-    dcdr >> m_step;
-    dcdr >> m_encoding;
-    dcdr >> m_timestamp;
-    dcdr >> m_data;
-}
-
-/*!
- * @brief This function sets a value in member width
- * @param _width New value for member width
- */
-void Frame::width(
-        int32_t _width)
-{
-    m_width = _width;
-}
-
-/*!
- * @brief This function returns the value of member width
- * @return Value of member width
- */
-int32_t Frame::width() const
-{
-    return m_width;
-}
-
-/*!
- * @brief This function returns a reference to member width
- * @return Reference to member width
- */
-int32_t& Frame::width()
-{
-    return m_width;
-}
-
-/*!
- * @brief This function sets a value in member height
- * @param _height New value for member height
- */
-void Frame::height(
-        int32_t _height)
-{
-    m_height = _height;
-}
-
-/*!
- * @brief This function returns the value of member height
- * @return Value of member height
- */
-int32_t Frame::height() const
-{
-    return m_height;
-}
-
-/*!
- * @brief This function returns a reference to member height
- * @return Reference to member height
- */
-int32_t& Frame::height()
-{
-    return m_height;
-}
-
-/*!
- * @brief This function sets a value in member step
- * @param _step New value for member step
- */
-void Frame::step(
-        int32_t _step)
-{
-    m_step = _step;
-}
-
-/*!
- * @brief This function returns the value of member step
- * @return Value of member step
- */
-int32_t Frame::step() const
-{
-    return m_step;
-}
-
-/*!
- * @brief This function returns a reference to member step
- * @return Reference to member step
- */
-int32_t& Frame::step()
-{
-    return m_step;
-}
-
-/*!
- * @brief This function copies the value in member encoding
- * @param _encoding New value to be copied in member encoding
- */
-void Frame::encoding(
-        const std::string& _encoding)
-{
-    m_encoding = _encoding;
-}
-
-/*!
- * @brief This function moves the value in member encoding
- * @param _encoding New value to be moved in member encoding
- */
-void Frame::encoding(
-        std::string&& _encoding)
-{
-    m_encoding = std::move(_encoding);
-}
-
-/*!
- * @brief This function returns a constant reference to member encoding
- * @return Constant reference to member encoding
- */
-const std::string& Frame::encoding() const
-{
-    return m_encoding;
-}
-
-/*!
- * @brief This function returns a reference to member encoding
- * @return Reference to member encoding
- */
-std::string& Frame::encoding()
-{
-    return m_encoding;
-}
-/*!
- * @brief This function sets a value in member timestamp
- * @param _timestamp New value for member timestamp
- */
-void Frame::timestamp(
-        int32_t _timestamp)
-{
-    m_timestamp = _timestamp;
-}
-
-/*!
- * @brief This function returns the value of member timestamp
- * @return Value of member timestamp
- */
-int32_t Frame::timestamp() const
-{
-    return m_timestamp;
-}
-
-/*!
- * @brief This function returns a reference to member timestamp
- * @return Reference to member timestamp
- */
-int32_t& Frame::timestamp()
-{
-    return m_timestamp;
-}
-
-/*!
- * @brief This function copies the value in member data
- * @param _data New value to be copied in member data
- */
-void Frame::data(
-        const std::vector<uint8_t>& _data)
-{
-    m_data = _data;
-}
-
-/*!
- * @brief This function moves the value in member data
- * @param _data New value to be moved in member data
- */
-void Frame::data(
-        std::vector<uint8_t>&& _data)
-{
-    m_data = std::move(_data);
-}
-
-/*!
- * @brief This function returns a constant reference to member data
- * @return Constant reference to member data
- */
-const std::vector<uint8_t>& Frame::data() const
-{
-    return m_data;
-}
-
-/*!
- * @brief This function returns a reference to member data
- * @return Reference to member data
- */
-std::vector<uint8_t>& Frame::data()
-{
-    return m_data;
-}
-
-size_t Frame::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-
-
-    return current_align;
-}
-
-bool Frame::isKeyDefined()
-{
-    return false;
-}
-
-void Frame::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-          
-}
-
-MPU6050MSG::MPU6050MSG()
-{
-    // m_ax com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1fa268de
-    m_ax = 0;
-    // m_ay com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4f6ee6e4
-    m_ay = 0;
-    // m_az com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4466af20
-    m_az = 0;
-    // m_gx com.eprosima.idl.parser.typecode.PrimitiveTypeCode@a514af7
-    m_gx = 0;
-    // m_gy com.eprosima.idl.parser.typecode.PrimitiveTypeCode@6b927fb
-    m_gy = 0;
-    // m_gz com.eprosima.idl.parser.typecode.PrimitiveTypeCode@4fb0f2b9
-    m_gz = 0;
-    // m_timestamp com.eprosima.idl.parser.typecode.PrimitiveTypeCode@79924b
-    m_timestamp = 0;
-
-}
-
-MPU6050MSG::~MPU6050MSG()
-{
-
-
-
-
-
-
-}
-
-MPU6050MSG::MPU6050MSG(
-        const MPU6050MSG& x)
-{
-    m_ax = x.m_ax;
-    m_ay = x.m_ay;
-    m_az = x.m_az;
-    m_gx = x.m_gx;
-    m_gy = x.m_gy;
-    m_gz = x.m_gz;
-    m_timestamp = x.m_timestamp;
-}
-
-MPU6050MSG::MPU6050MSG(
-        MPU6050MSG&& x)
-{
-    m_ax = x.m_ax;
-    m_ay = x.m_ay;
-    m_az = x.m_az;
-    m_gx = x.m_gx;
-    m_gy = x.m_gy;
-    m_gz = x.m_gz;
-    m_timestamp = x.m_timestamp;
-}
-
-MPU6050MSG& MPU6050MSG::operator =(
-        const MPU6050MSG& x)
-{
-
-    m_ax = x.m_ax;
-    m_ay = x.m_ay;
-    m_az = x.m_az;
-    m_gx = x.m_gx;
-    m_gy = x.m_gy;
-    m_gz = x.m_gz;
-    m_timestamp = x.m_timestamp;
-
-    return *this;
-}
-
-MPU6050MSG& MPU6050MSG::operator =(
-        MPU6050MSG&& x)
-{
-
-    m_ax = x.m_ax;
-    m_ay = x.m_ay;
-    m_az = x.m_az;
-    m_gx = x.m_gx;
-    m_gy = x.m_gy;
-    m_gz = x.m_gz;
-    m_timestamp = x.m_timestamp;
-
-    return *this;
-}
-
-bool MPU6050MSG::operator ==(
-        const MPU6050MSG& x) const
-{
-
-    return (m_ax == x.m_ax && m_ay == x.m_ay && m_az == x.m_az && m_gx == x.m_gx && m_gy == x.m_gy && m_gz == x.m_gz && m_timestamp == x.m_timestamp);
-}
-
-bool MPU6050MSG::operator !=(
-        const MPU6050MSG& x) const
-{
-    return !(*this == x);
-}
-
-size_t MPU6050MSG::getMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-
-    return current_alignment - initial_alignment;
-}
-
-size_t MPU6050MSG::getCdrSerializedSize(
-        const MPU6050MSG& data,
-        size_t current_alignment)
-{
-    (void)data;
-    size_t initial_alignment = current_alignment;
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 2 + eprosima::fastcdr::Cdr::alignment(current_alignment, 2);
-
-
-    current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
-
-
-
-    return current_alignment - initial_alignment;
-}
-
-void MPU6050MSG::serialize(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-
-    scdr << m_ax;
-    scdr << m_ay;
-    scdr << m_az;
-    scdr << m_gx;
-    scdr << m_gy;
-    scdr << m_gz;
-    scdr << m_timestamp;
-
-}
-
-void MPU6050MSG::deserialize(
-        eprosima::fastcdr::Cdr& dcdr)
-{
-
-    dcdr >> m_ax;
-    dcdr >> m_ay;
-    dcdr >> m_az;
-    dcdr >> m_gx;
-    dcdr >> m_gy;
-    dcdr >> m_gz;
-    dcdr >> m_timestamp;
-}
-
-/*!
- * @brief This function sets a value in member ax
- * @param _ax New value for member ax
- */
-void MPU6050MSG::ax(
-        int16_t _ax)
-{
-    m_ax = _ax;
-}
-
-/*!
- * @brief This function returns the value of member ax
- * @return Value of member ax
- */
-int16_t MPU6050MSG::ax() const
-{
-    return m_ax;
-}
-
-/*!
- * @brief This function returns a reference to member ax
- * @return Reference to member ax
- */
-int16_t& MPU6050MSG::ax()
-{
-    return m_ax;
-}
-
-/*!
- * @brief This function sets a value in member ay
- * @param _ay New value for member ay
- */
-void MPU6050MSG::ay(
-        int16_t _ay)
-{
-    m_ay = _ay;
-}
-
-/*!
- * @brief This function returns the value of member ay
- * @return Value of member ay
- */
-int16_t MPU6050MSG::ay() const
-{
-    return m_ay;
-}
-
-/*!
- * @brief This function returns a reference to member ay
- * @return Reference to member ay
- */
-int16_t& MPU6050MSG::ay()
-{
-    return m_ay;
-}
-
-/*!
- * @brief This function sets a value in member az
- * @param _az New value for member az
- */
-void MPU6050MSG::az(
-        int16_t _az)
-{
-    m_az = _az;
-}
-
-/*!
- * @brief This function returns the value of member az
- * @return Value of member az
- */
-int16_t MPU6050MSG::az() const
-{
-    return m_az;
-}
-
-/*!
- * @brief This function returns a reference to member az
- * @return Reference to member az
- */
-int16_t& MPU6050MSG::az()
-{
-    return m_az;
-}
-
-/*!
- * @brief This function sets a value in member gx
- * @param _gx New value for member gx
- */
-void MPU6050MSG::gx(
-        int16_t _gx)
-{
-    m_gx = _gx;
-}
-
-/*!
- * @brief This function returns the value of member gx
- * @return Value of member gx
- */
-int16_t MPU6050MSG::gx() const
-{
-    return m_gx;
-}
-
-/*!
- * @brief This function returns a reference to member gx
- * @return Reference to member gx
- */
-int16_t& MPU6050MSG::gx()
-{
-    return m_gx;
-}
-
-/*!
- * @brief This function sets a value in member gy
- * @param _gy New value for member gy
- */
-void MPU6050MSG::gy(
-        int16_t _gy)
-{
-    m_gy = _gy;
-}
-
-/*!
- * @brief This function returns the value of member gy
- * @return Value of member gy
- */
-int16_t MPU6050MSG::gy() const
-{
-    return m_gy;
-}
-
-/*!
- * @brief This function returns a reference to member gy
- * @return Reference to member gy
- */
-int16_t& MPU6050MSG::gy()
-{
-    return m_gy;
-}
-
-/*!
- * @brief This function sets a value in member gz
- * @param _gz New value for member gz
- */
-void MPU6050MSG::gz(
-        int16_t _gz)
-{
-    m_gz = _gz;
-}
-
-/*!
- * @brief This function returns the value of member gz
- * @return Value of member gz
- */
-int16_t MPU6050MSG::gz() const
-{
-    return m_gz;
-}
-
-/*!
- * @brief This function returns a reference to member gz
- * @return Reference to member gz
- */
-int16_t& MPU6050MSG::gz()
-{
-    return m_gz;
-}
-
-/*!
- * @brief This function sets a value in member timestamp
- * @param _timestamp New value for member timestamp
- */
-void MPU6050MSG::timestamp(
-        int32_t _timestamp)
-{
-    m_timestamp = _timestamp;
-}
-
-/*!
- * @brief This function returns the value of member timestamp
- * @return Value of member timestamp
- */
-int32_t MPU6050MSG::timestamp() const
-{
-    return m_timestamp;
-}
-
-/*!
- * @brief This function returns a reference to member timestamp
- * @return Reference to member timestamp
- */
-int32_t& MPU6050MSG::timestamp()
-{
-    return m_timestamp;
-}
-
-
-size_t MPU6050MSG::getKeyMaxCdrSerializedSize(
-        size_t current_alignment)
-{
-    size_t current_align = current_alignment;
-
-
-
-    return current_align;
-}
-
-bool MPU6050MSG::isKeyDefined()
-{
-    return false;
-}
-
-void MPU6050MSG::serializeKey(
-        eprosima::fastcdr::Cdr& scdr) const
-{
-    (void) scdr;
-           
-}
-
 SensorDataSync::SensorDataSync()
 {
-    // m_cam_L com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@5b7a5baa
+    // m_cam_L com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@a1153bc
 
-    // m_cam_R com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@5b7a5baa
+    // m_cam_R com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@a1153bc
 
-    // m_cam_depth com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@5b7a5baa
+    // m_imu_parsed com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@1aafa419
 
-    // m_imu_parsed com.eprosima.fastdds.idl.parser.typecode.StructTypeCode@776aec5c
-
-    // m_timestamp com.eprosima.idl.parser.typecode.PrimitiveTypeCode@1d296da
+    // m_timestamp com.eprosima.idl.parser.typecode.PrimitiveTypeCode@47eaca72
     m_timestamp = 0;
 
 }
 
 SensorDataSync::~SensorDataSync()
 {
-
 
 
 
@@ -856,7 +59,6 @@ SensorDataSync::SensorDataSync(
 {
     m_cam_L = x.m_cam_L;
     m_cam_R = x.m_cam_R;
-    m_cam_depth = x.m_cam_depth;
     m_imu_parsed = x.m_imu_parsed;
     m_timestamp = x.m_timestamp;
 }
@@ -866,7 +68,6 @@ SensorDataSync::SensorDataSync(
 {
     m_cam_L = std::move(x.m_cam_L);
     m_cam_R = std::move(x.m_cam_R);
-    m_cam_depth = std::move(x.m_cam_depth);
     m_imu_parsed = std::move(x.m_imu_parsed);
     m_timestamp = x.m_timestamp;
 }
@@ -877,7 +78,6 @@ SensorDataSync& SensorDataSync::operator =(
 
     m_cam_L = x.m_cam_L;
     m_cam_R = x.m_cam_R;
-    m_cam_depth = x.m_cam_depth;
     m_imu_parsed = x.m_imu_parsed;
     m_timestamp = x.m_timestamp;
 
@@ -890,7 +90,6 @@ SensorDataSync& SensorDataSync::operator =(
 
     m_cam_L = std::move(x.m_cam_L);
     m_cam_R = std::move(x.m_cam_R);
-    m_cam_depth = std::move(x.m_cam_depth);
     m_imu_parsed = std::move(x.m_imu_parsed);
     m_timestamp = x.m_timestamp;
 
@@ -901,7 +100,7 @@ bool SensorDataSync::operator ==(
         const SensorDataSync& x) const
 {
 
-    return (m_cam_L == x.m_cam_L && m_cam_R == x.m_cam_R && m_cam_depth == x.m_cam_depth && m_imu_parsed == x.m_imu_parsed && m_timestamp == x.m_timestamp);
+    return (m_cam_L == x.m_cam_L && m_cam_R == x.m_cam_R && m_imu_parsed == x.m_imu_parsed && m_timestamp == x.m_timestamp);
 }
 
 bool SensorDataSync::operator !=(
@@ -916,9 +115,8 @@ size_t SensorDataSync::getMaxCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += Frame::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += Frame::getMaxCdrSerializedSize(current_alignment);
-    current_alignment += Frame::getMaxCdrSerializedSize(current_alignment);
+    current_alignment += FrameMSG::getMaxCdrSerializedSize(current_alignment);
+    current_alignment += FrameMSG::getMaxCdrSerializedSize(current_alignment);
     current_alignment += MPU6050MSG::getMaxCdrSerializedSize(current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
@@ -935,9 +133,8 @@ size_t SensorDataSync::getCdrSerializedSize(
     size_t initial_alignment = current_alignment;
 
 
-    current_alignment += Frame::getCdrSerializedSize(data.cam_L(), current_alignment);
-    current_alignment += Frame::getCdrSerializedSize(data.cam_R(), current_alignment);
-    current_alignment += Frame::getCdrSerializedSize(data.cam_depth(), current_alignment);
+    current_alignment += FrameMSG::getCdrSerializedSize(data.cam_L(), current_alignment);
+    current_alignment += FrameMSG::getCdrSerializedSize(data.cam_R(), current_alignment);
     current_alignment += MPU6050MSG::getCdrSerializedSize(data.imu_parsed(), current_alignment);
     current_alignment += 4 + eprosima::fastcdr::Cdr::alignment(current_alignment, 4);
 
@@ -952,7 +149,6 @@ void SensorDataSync::serialize(
 
     scdr << m_cam_L;
     scdr << m_cam_R;
-    scdr << m_cam_depth;
     scdr << m_imu_parsed;
     scdr << m_timestamp;
 
@@ -964,7 +160,6 @@ void SensorDataSync::deserialize(
 
     dcdr >> m_cam_L;
     dcdr >> m_cam_R;
-    dcdr >> m_cam_depth;
     dcdr >> m_imu_parsed;
     dcdr >> m_timestamp;
 }
@@ -974,7 +169,7 @@ void SensorDataSync::deserialize(
  * @param _cam_L New value to be copied in member cam_L
  */
 void SensorDataSync::cam_L(
-        const Frame& _cam_L)
+        const FrameMSG& _cam_L)
 {
     m_cam_L = _cam_L;
 }
@@ -984,7 +179,7 @@ void SensorDataSync::cam_L(
  * @param _cam_L New value to be moved in member cam_L
  */
 void SensorDataSync::cam_L(
-        Frame&& _cam_L)
+        FrameMSG&& _cam_L)
 {
     m_cam_L = std::move(_cam_L);
 }
@@ -993,7 +188,7 @@ void SensorDataSync::cam_L(
  * @brief This function returns a constant reference to member cam_L
  * @return Constant reference to member cam_L
  */
-const Frame& SensorDataSync::cam_L() const
+const FrameMSG& SensorDataSync::cam_L() const
 {
     return m_cam_L;
 }
@@ -1002,7 +197,7 @@ const Frame& SensorDataSync::cam_L() const
  * @brief This function returns a reference to member cam_L
  * @return Reference to member cam_L
  */
-Frame& SensorDataSync::cam_L()
+FrameMSG& SensorDataSync::cam_L()
 {
     return m_cam_L;
 }
@@ -1011,7 +206,7 @@ Frame& SensorDataSync::cam_L()
  * @param _cam_R New value to be copied in member cam_R
  */
 void SensorDataSync::cam_R(
-        const Frame& _cam_R)
+        const FrameMSG& _cam_R)
 {
     m_cam_R = _cam_R;
 }
@@ -1021,7 +216,7 @@ void SensorDataSync::cam_R(
  * @param _cam_R New value to be moved in member cam_R
  */
 void SensorDataSync::cam_R(
-        Frame&& _cam_R)
+        FrameMSG&& _cam_R)
 {
     m_cam_R = std::move(_cam_R);
 }
@@ -1030,7 +225,7 @@ void SensorDataSync::cam_R(
  * @brief This function returns a constant reference to member cam_R
  * @return Constant reference to member cam_R
  */
-const Frame& SensorDataSync::cam_R() const
+const FrameMSG& SensorDataSync::cam_R() const
 {
     return m_cam_R;
 }
@@ -1039,46 +234,9 @@ const Frame& SensorDataSync::cam_R() const
  * @brief This function returns a reference to member cam_R
  * @return Reference to member cam_R
  */
-Frame& SensorDataSync::cam_R()
+FrameMSG& SensorDataSync::cam_R()
 {
     return m_cam_R;
-}
-/*!
- * @brief This function copies the value in member cam_depth
- * @param _cam_depth New value to be copied in member cam_depth
- */
-void SensorDataSync::cam_depth(
-        const Frame& _cam_depth)
-{
-    m_cam_depth = _cam_depth;
-}
-
-/*!
- * @brief This function moves the value in member cam_depth
- * @param _cam_depth New value to be moved in member cam_depth
- */
-void SensorDataSync::cam_depth(
-        Frame&& _cam_depth)
-{
-    m_cam_depth = std::move(_cam_depth);
-}
-
-/*!
- * @brief This function returns a constant reference to member cam_depth
- * @return Constant reference to member cam_depth
- */
-const Frame& SensorDataSync::cam_depth() const
-{
-    return m_cam_depth;
-}
-
-/*!
- * @brief This function returns a reference to member cam_depth
- * @return Reference to member cam_depth
- */
-Frame& SensorDataSync::cam_depth()
-{
-    return m_cam_depth;
 }
 /*!
  * @brief This function copies the value in member imu_parsed
@@ -1165,5 +323,5 @@ void SensorDataSync::serializeKey(
         eprosima::fastcdr::Cdr& scdr) const
 {
     (void) scdr;
-         
+        
 }
