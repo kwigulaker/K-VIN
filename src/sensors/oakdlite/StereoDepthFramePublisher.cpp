@@ -31,11 +31,8 @@ FrameMSG convertToDDSFrame(const cv::Mat& mat, const std::string& encoding, int6
         std::vector<int> params = {cv::IMWRITE_JPEG_QUALITY, 80};
         cv::imencode(".jpg", mat, buffer, params);
         msg.encoding("jpeg");
-    } else if (encoding == "16UC1") {
-        std::vector<int> params = {cv::IMWRITE_PNG_COMPRESSION, 3};
-        cv::imencode(".png", mat, buffer, params);
-        msg.encoding("png");
-    } else {
+    }
+    else {
         throw std::runtime_error("Unsupported encoding: " + encoding);
     }
 
@@ -51,15 +48,12 @@ int main() {
 
     TypeSupport frameTypeDDS(new FrameMSGPubSubType());
     frameTypeDDS.register_type(participant);
-    std::cout << "Type: " << frameTypeDDS.get_type_name() << std::endl;
     Topic* topicFrameL = participant->create_topic("FrameCamL", frameTypeDDS.get_type_name(), TOPIC_QOS_DEFAULT);
     Topic* topicFrameR = participant->create_topic("FrameCamR", frameTypeDDS.get_type_name(), TOPIC_QOS_DEFAULT);
-    Topic* topicFrameDepth = participant->create_topic("FrameDepth", frameTypeDDS.get_type_name(), TOPIC_QOS_DEFAULT);
 
     Publisher* publisher = participant->create_publisher(PUBLISHER_QOS_DEFAULT);
     DataWriter* writerFrameL = publisher->create_datawriter(topicFrameL, DATAWRITER_QOS_DEFAULT);
     DataWriter* writerFrameR = publisher->create_datawriter(topicFrameR, DATAWRITER_QOS_DEFAULT);
-    DataWriter* writerFrameDepth = publisher->create_datawriter(topicFrameDepth, DATAWRITER_QOS_DEFAULT);
     dai::Pipeline pipeline;
 
     auto monoLeft = pipeline.create<dai::node::Camera>()->build(dai::CameraBoardSocket::CAM_B);
@@ -86,7 +80,6 @@ int main() {
     FrameMSG rightFrameDDS;
     FrameMSG depthFrameDDS;
     std::string encodingRectifiedImages = "mono8";
-    std::string encodingDepthImages = "16UC1";
 
     auto period = std::chrono::milliseconds(100); // 10hz
     auto next = std::chrono::steady_clock::now() + period;
@@ -102,15 +95,12 @@ int main() {
 
         cv::Mat leftFrameCV = leftSynced->getCvFrame();
         cv::Mat rightFrameCV = rightSynced->getCvFrame();
-        //cv::Mat depthFrameCV = depthSynced->getCvFrame();
 
         leftFrameDDS = convertToDDSFrame(leftFrameCV,encodingRectifiedImages,ts);
         rightFrameDDS = convertToDDSFrame(rightFrameCV,encodingRectifiedImages,ts);
-        //depthFrameDDS = convertToDDSFrame(depthFrameCV,encodingDepthImages,ts);
         
         writerFrameL->write(&leftFrameDDS);
         writerFrameR->write(&rightFrameDDS);
-        //writerFrameDepth->write(&depthFrameDDS);
         std::this_thread::sleep_until(next);
         next += period;
     }

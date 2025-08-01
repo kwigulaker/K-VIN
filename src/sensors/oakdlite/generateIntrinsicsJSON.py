@@ -5,8 +5,8 @@ with dai.Device() as device:
     calib = device.readCalibration()
 
     def get_camera_info(cam_socket):
-        width = 1280 # default width for oakdlite at max resolution
-        height = 800 # default height
+        width = 640 # default width
+        height = 480 # default height
         intrinsics = calib.getCameraIntrinsics(cam_socket, width, height)
         dist_coeffs = calib.getDistortionCoefficients(cam_socket)
 

@@ -7,6 +7,7 @@
 #include <fastdds/dds/topic/qos/TopicQos.hpp>
 #include <fastdds/dds/publisher/qos/DataWriterQos.hpp>
 #include <fastdds/dds/publisher/DataWriter.hpp>
+#include <fastdds/dds/subscriber/DataReader.hpp>
 #include <Eigen/Dense>
 #include <Eigen/Geometry>
 #include <Eigen/Core>
@@ -33,24 +34,38 @@ public:
         std::mutex* sensorDataSyncMutex,
         std::deque<SensorDataSync>* sensorDataSyncBuffer,
         std::mutex* stateMutex,
-        std::deque<StateVector>* stateBuffer,
-        eprosima::fastdds::dds::DataWriter* writerSync);
-    
+        std::deque<StateVector>* stateBuffer
+        );
+    void initializeConfig();
+    void onDataAvailable(SensorDataSync& syncMsg);
+    cv::Mat convertFromDDSFrame(const FrameMSG& msg);
     void predict(const SensorDataSync& syncMsg);
     void update(const SensorDataSync& syncMsg);
-    void detectFeaturePoints(const FrameMSG& frame);
-    void matchFeaturePoints(const FrameMSG& a, const FrameMSG& b);
-    void projectPointsTo3D(const FrameMSG& frame);
+    cv::Mat camL_to_IMU(cv::Mat& cam_tf);
+    cv::Mat estimate_motion_with_frames(const SensorDataSync& syncMsg);
+    std::unordered_map<int, cv::Point3f> projectPointsTo3D(
+    std::vector<cv::KeyPoint>& kp_L,
+    std::vector<cv::KeyPoint>& kp_R,
+    std::vector<cv::DMatch>& matches);
     template <typename T>
     void pruneOldMessages(std::deque<T>& buffer, double maxTime, double timeNow);
 
 private:
     std::mutex* sensorDataSyncMutex;
-    std::deque<StateVector>* sensorDataSyncBuffer;
+    std::deque<SensorDataSync>* sensorDataSyncBuffer;
     std::mutex* stateMutex;
-    std::deque<FrameMSG>* stateBuffer;
-    eprosima::fastdds::dds::DataWriter* writerSync;
+    std::deque<StateVector>* stateBuffer;
+    static constexpr double maxBufferItemTimeMilliSec = 1000; // 1 sec max buffer time
     // openCV feature detection and matching
     cv::Ptr<cv::ORB> orbDetector;
     cv::BFMatcher matcher;
+    // cam intrinsics
+    static constexpr const char* cameraIntrinsicsFile = "./src/odometry/cameraIntrinsics.json";
+    cv::Mat camLIntrinsics;
+    cv::Mat camRIntrinsics;
+    // cam extrinsics
+    static constexpr const char* TCamLCamRFile = "./src/odometry/camL_to_camR_m.json";
+    static constexpr const char* TCamRIMUFile = "./src/odometry/camR_to_IMU_m.json";
+    cv::Mat T_camL_to_camR_m;
+    cv::Mat T_camR_to_IMU_m;
 };

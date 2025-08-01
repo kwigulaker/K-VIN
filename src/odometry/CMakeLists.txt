@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(fastrtps REQUIRED)
 find_package(fastcdr REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(OpenCV REQUIRED)
 
 # Define include paths for generated DDS code and IDL includes
 include_directories(
@@ -31,8 +32,10 @@ add_executable(PoseEstimator
 
 # Link with FastDDS
 target_link_libraries(PoseEstimator
+    PRIVATE nlohmann_json::nlohmann_json
     fastrtps
     fastcdr
+    ${OpenCV_LIBS}
     Eigen3::Eigen
 )
 
